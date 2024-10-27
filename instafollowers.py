@@ -75,10 +75,11 @@ def show():
 	print("")
 	print(f"{len(following)} tane takip edilen")
 	print(f"{len(followers)} tane takipçi")
-	print("\nseni geri takip etmeyenler:\n")
-	for i in range(len(fames)):
-		print(str(i + 1) + (" " if i + 1 < 10 else "") + "-) " + fames[i]) 
-	print("")
+	if(len(fames) > 0):
+		print("\nseni geri takip etmeyenler:\n")
+		for i in range(len(fames)):
+			print(str(i + 1) + (" " if i + 1 < 10 else "") + "-) " + fames[i]) 
+		print("")
 	if(len(quitted) > 0):
 		print('yakın zamanda takibi bırakanlar:')
 		for i in range(len(quitted)):
@@ -87,22 +88,39 @@ def show():
 
 # takip isteklerinin aranması
 def search_denied():
-	while True:
-		u = input()
-		if(u==""): break
-		elif(u=="*"):
-			for i in range(len(denied)):
-				print(str(i+1) + "-) " + denied[i])
-		else:
-			for i in denied:
-				if(u in i):
-					print("-" + i)
-		print("")
+	if(len(denied) > 0):
+		while True:
+			u = input()
+			if(u==""): break
+			elif(u=="*"):
+				for i in range(len(denied)):
+					print(str(i+1) + "-) " + denied[i])
+			else:
+				for i in denied:
+					if(u in i):
+						print("-" + i)
+			print("")
 		
+try:
+	upload_data(following, "following.html")
 
-upload_data(following, "following.html")
-upload_data(followers, "followers_1.html")
-upload_data(reqs, "recent_follow_requests.html")
+except:
+	print("")
+	print("&&& Takip edilen listesi yüklenemedi!")
+
+try:	
+	upload_data(followers, "followers_1.html")
+
+except:
+	print("")
+	print("&&& Takipçi listesi yüklenemedi!")
+
+try:	
+	upload_data(reqs, "recent_follow_requests.html")
+
+except:
+	print("")
+	print("&&& Takip istekleri listesi yüklenemedi!")
 
 try:
 	upload_data(old_followers, "followers_2.html")
@@ -114,7 +132,11 @@ except:
 else:
 	find(old_followers, followers, quitted)	
 
-find(following, followers, fames)
-find(reqs, following, denied)
+if(len(following) > 0 and len(followers) > 0):
+	find(following, followers, fames)
+
+if(len(reqs) > 0 and len(following) > 0):
+	find(reqs, following, denied)
+
 show()
 search_denied()
